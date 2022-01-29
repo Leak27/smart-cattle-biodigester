@@ -1,4 +1,4 @@
-# smart-cattle-biodigester
+# Smart Cattle Biodigester
 IoT device that can monitor cattle biodigester with NodeMCU ESP8266.
 Sensors:
 - MQ-4
