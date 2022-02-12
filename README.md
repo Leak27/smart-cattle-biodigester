@@ -7,5 +7,5 @@ I used 3 types of MQ sensor: MQ-4, MQ-135 and MQ-8. For those sensors I used *MQ
 https://github.com/miguel5612/MQSensorsLib
 
 # BME280 Sensor
-
-
+I used *BME280 Sensor* library from Adafruit:
+https://github.com/adafruit/Adafruit_BME280_Library
