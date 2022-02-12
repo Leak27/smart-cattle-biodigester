@@ -1,9 +1,9 @@
 #include <MQUnifiedsensor.h>
 
 #define         Board                   ("Arduino NANO")
-#define         Pin4                     (A1)  //Analog input 1 of your arduino
-#define         Pin135                   (A2)  //Analog input 2 of your arduino
-#define         Pin8                     (A6)  //Analog input 6 of your arduino
+#define         Pin4                     (A0)  //Analog input 1 of your arduino
+#define         Pin135                   (A1)  //Analog input 2 of your arduino
+#define         Pin8                     (A2)  //Analog input 6 of your arduino
 
 #define         RatioMQ4CleanAir          (4.4) //RS / R0 = 4.4 ppm
 #define         RatioMQ135CleanAir        (3.6) //RS / R0 = 10 ppm

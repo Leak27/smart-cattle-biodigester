@@ -1,16 +1,11 @@
 # Smart Cattle Biodigester
 IoT device that can monitor cattle biodigester with NodeMCU ESP8266 based on https://randomnerdtutorials.com/esp32-esp8266-mysql-database-php/
-Sensors:
-- MQ-4
-- MQ-8
-- MQ-135
-- DHT22
-- LCD 20 x 4
 
-Database using mySQL service with custom online hosting, then the data displayed on front-end website.
 
-# MQ-8 Calibration
-http://sandboxelectronics.com/?p=196
+# MQ Sensor 
+I used 3 types of MQ sensor: MQ-4, MQ-135 and MQ-8. For those sensors I used *MQSensorsLib* library from Miguel A. Califa
+https://github.com/miguel5612/MQSensorsLib
 
+# BME280 Sensor
 
 
