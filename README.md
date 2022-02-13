@@ -1,5 +1,5 @@
 # Smart Cattle Biodigester
-IoT device that can monitor cattle biodigester with NodeMCU ESP8266 based on https://randomnerdtutorials.com/esp32-esp8266-mysql-database-php/
+IoT device that can monitor cattle biodigester powered with Arduino Nano and NodeMCU ESP8266. I used Arduino to collect data from all sensors and send it to NodeMCU via UART communication. The NodeMCU will store the datas to the server.
 
 
 # MQ Sensor 
