@@ -1,113 +1,72 @@
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_BME280.h>
 #include <LiquidCrystal_I2C.h>
-LiquidCrystal_I2C lcd(0x27, 20, 4);
+LiquidCrystal_I2C lcd(0x27,16,2);
 
-const byte MQ4_Pin = A0;
-const int R_0 = 945; 
+#include <MQUnifiedsensor.h>
 
-#include "MQ135.h"
+#define         Board                   ("Arduino NANO")
+#define         Pin4                     (A2)  //Analog input 1 of your arduino
+#define         Pin135                   (A0)  //Analog input 2 of your arduino
+#define         Pin8                     (A1)  //Analog input 6 of your arduino
 
-#include "DHT.h"
-#define DHTPIN 14
-#define DHTTYPE DHT22
-DHT dht(DHTPIN, DHTTYPE);
- 
+#define         RatioMQ4CleanAir          (4.4) //RS / R0 = 4.4 ppm 
+#define         RatioMQ135CleanAir        (3.6) //RS / R0 = 10 ppm  
+#define         RatioMQ8CleanAir          (70) //RS / R0 = 70 ppm   
+#define         ADC_Bit_Resolution        (10) // 10 bit ADC 
+#define         Voltage_Resolution        (5) // Volt resolution to calc the voltage
+#define         Type                      ("Arduino NANO") //Board used
+//Declare Sensor
+MQUnifiedsensor MQ4(Board, Voltage_Resolution, ADC_Bit_Resolution, Pin4, Type);
+MQUnifiedsensor MQ135(Board, Voltage_Resolution, ADC_Bit_Resolution, Pin135, Type);
+MQUnifiedsensor MQ8(Board, Voltage_Resolution, ADC_Bit_Resolution, Pin8, Type);
+
+Adafruit_BME280 bme;
+
 void setup() {
-   Serial.begin(9600);
-   lcd.begin();
-   lcd.setCursor(0,0);
-   lcd.print("Astra Jenaka");
-   
+  Serial.begin(9600);
+  lcd.init();
+
+  lcd.backlight();                       
+
+  MQ4.init();
+  MQ4.setRegressionMethod(1); //_PPM =  a*ratio^b
+  MQ4.setR0(14.23);
+  MQ135.init();
+  MQ135.setRegressionMethod(1); //_PPM =  a*ratio^b
+  MQ135.setR0(9.03);
+  MQ8.init();
+  MQ8.setRegressionMethod(1); //_PPM =  a*ratio^b
+  MQ8.setR0(0.91);
 }
- 
+
 void loop() {
-   Serial.println(getMethanePPM());
-   float h = dht.readHumidity();
-   float t = dht.readTemperature();
-   float f = dht.readTemperature(true);
+  lcd.init();
+  //Update the voltage lectures
+  MQ4.update();
+  MQ135.update();  
+  MQ8.update();
 
-   if (isnan(h) || isnan(t) || isnan(f)) {
-    Serial.println(F("Failed to read from DHT sensor!"));
-    return;
-  }
-
-  float hif = dht.computeHeatIndex(f, h);
-  float hic = dht.computeHeatIndex(t, h, false);
-
-  Serial.print(F("Humidity: "));
-  Serial.print(h);
-  Serial.print(F("%  Temperature: "));
-  Serial.print(t);
-  Serial.print(F("°C "));
-  Serial.print(f);
-  Serial.print(F("°F  Heat index: "));
-  Serial.print(hic);
-  Serial.print(F("°C "));
-  Serial.print(hif);
-  Serial.println(F("°F"));
-
-  MQ135 gasSensor = MQ135(A0);
-  float air_quality = gasSensor.getPPM();
-  Serial.print("Air Quality: ");  
-  Serial.print(air_quality);
-  lcd.setCursor(0,0);
-  lcd.print("MQ135 = ");
-  lcd.print(air_quality);
-  
+  MQ4.setA(1012.7); MQ4.setB(-2.786); //CH4
+float CH4 = MQ4.readSensor(); 
+ 
+  MQ135.setA(110.47); MQ135.setB(-2.862); //CO2 
+float CO2 = MQ135.readSensor(); 
    
-}
- 
-float getMethanePPM(){
-   float a0 = analogRead(A0); 
-   float v_o = a0 * 5 / 1023;
-   float R_S = (5-v_o) * 1000 / v_o;
-   float PPM = pow(R_S/R_0,-2.95) * 1000; 
-   return PPM;
-}
+  MQ8.setA(976.97); MQ8.setB(-0.688); // H2
+float H2 = MQ8.readSensor();
 
-
-
-
-#include <SoftwareSerial.h>
- 
-SoftwareSerial nodemcu(19,18);
-/*
-int sensor1 = A0;
-int sensor2 = A1; 
-int sensor3 = A2; 
- */
-int sdata1 = 0; // sensor1 data
-int sdata2 = 0; // sensor2 data
-int sdata3 = 0; // sensor3 data 
-
- 
-String cdata; // complete data, consisting of sensors values
- 
-void setup()
-{
-Serial.begin(9600); 
-nodemcu.begin(9600);
-/*
-pinMode(sensor1, INPUT);
-pinMode(sensor2, INPUT);
-pinMode(sensor3, INPUT);
-pinMode(4, OUTPUT); // TO ON/OFF VARIABLE RESISTOR
-digitalWrite(4, HIGH); 
-*/
-}
- 
-void loop()
-{
-  /*
-    sdata1 = analogRead(sensor1);
-    sdata2 = analogRead(sensor2);
-    sdata3 = analogRead(sensor3);*/
-   sdata1 = 10;
-   sdata2 = 11;
-   sdata3 = 12;
-   cdata = cdata + sdata1+","+sdata2+","+sdata3; // comma will be used a delimeter
-   Serial.println(cdata); 
-   nodemcu.println(cdata);
-   delay(2000); // 100 milli seconds
-   cdata = ""; 
- 
+  Serial.print("Methane:  "); Serial.println(CH4);
+  Serial.print("CO2:      "); Serial.println(CO2);
+  Serial.print("H2:       "); Serial.println(H2);
+  Serial.println("--------------------------------------------------------");
+  
+  lcd.setCursor (2, 0);
+  lcd.print(CO2);
+  lcd.setCursor(9, 0);
+  lcd.print(H2/10);
+  lcd.setCursor (6, 1);
+  lcd.print(CH4/100);
+  delay(1500);
 }
