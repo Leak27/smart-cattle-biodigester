@@ -28,7 +28,22 @@ void setup() {
   Serial.begin(9600);
   lcd.init();
 
-  lcd.backlight();                       
+  lcd.backlight();
+  lcd.setCursor(6,0);
+  lcd.print("Welcome");
+  lcd.setCursor(4,1);
+  lcd.print("Scatter-ID");
+  delay(2000);
+  
+  if (!bme.begin(0x76)) {
+    Serial.println("Could not find a valid BME280 sensor, check wiring!");
+    lcd.setCursor(3,0);
+    lcd.print("BME280 Error");
+    lcd.setCursor(1,1);
+    lcd.print("Restart System");
+       
+    while (1);
+  }                       
 
   MQ4.init();
   MQ4.setRegressionMethod(1); //_PPM =  a*ratio^b
@@ -43,19 +58,18 @@ void setup() {
 
 void loop() {
   lcd.init();
-  //Update the voltage lectures
   MQ4.update();
   MQ135.update();  
   MQ8.update();
 
   MQ4.setA(1012.7); MQ4.setB(-2.786); //CH4
-float CH4 = MQ4.readSensor(); 
+  float CH4 = MQ4.readSensor(); 
  
   MQ135.setA(110.47); MQ135.setB(-2.862); //CO2 
-float CO2 = MQ135.readSensor(); 
+  float CO2 = MQ135.readSensor(); 
    
   MQ8.setA(976.97); MQ8.setB(-0.688); // H2
-float H2 = MQ8.readSensor();
+  float H2 = MQ8.readSensor();
 
   Serial.print("Methane:  "); Serial.println(CH4);
   Serial.print("CO2:      "); Serial.println(CO2);
