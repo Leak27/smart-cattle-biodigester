@@ -29,11 +29,11 @@ void setup() {
   lcd.init();
 
   lcd.backlight();
-  lcd.setCursor(6,0);
+  lcd.setCursor(5,0);
   lcd.print("Welcome");
-  lcd.setCursor(4,1);
+  lcd.setCursor(3,1);
   lcd.print("Scatter-ID");
-  delay(2000);
+  delay(5000);
   
   if (!bme.begin(0x76)) {
     Serial.println("Could not find a valid BME280 sensor, check wiring!");
@@ -56,8 +56,7 @@ void setup() {
   MQ8.setR0(0.91);
 }
 
-void loop() {
-  lcd.init();
+void gas (){
   MQ4.update();
   MQ135.update();  
   MQ8.update();
@@ -71,16 +70,57 @@ void loop() {
   MQ8.setA(976.97); MQ8.setB(-0.688); // H2
   float H2 = MQ8.readSensor();
 
-  Serial.print("Methane:  "); Serial.println(CH4);
-  Serial.print("CO2:      "); Serial.println(CO2);
-  Serial.print("H2:       "); Serial.println(H2);
-  Serial.println("--------------------------------------------------------");
-  
   lcd.setCursor (2, 0);
-  lcd.print(CO2);
-  lcd.setCursor(9, 0);
-  lcd.print(H2/10);
-  lcd.setCursor (6, 1);
-  lcd.print(CH4/100);
-  delay(1500);
+  lcd.print("Getting Data");
+  lcd.setCursor (0, 1);
+  lcd.print("CO2: ");
+  lcd.print(CO2, 2);
+  lcd.setCursor(12,1);
+  lcd.print("ppm");
+  delay(2500);
+  lcd.clear(); 
+
+  lcd.setCursor (0, 0);
+  lcd.print("H2 : ");
+  lcd.print(H2,2);
+  lcd.setCursor(12,0);
+  lcd.print("ppm");
+  lcd.setCursor (0, 1);
+  lcd.print("CH4: ");
+  lcd.print(CH4, 2);
+  lcd.setCursor(13,1);
+  lcd.print("ppm");
+  delay(2500);
+  lcd.clear(); 
 }
+
+void bme_val (){
+  
+  float temp = bme.readTemperature();
+  float pressure = bme.readPressure() / 100.0F;
+  float humid = bme.readHumidity();
+  
+  lcd.setCursor (0, 0);
+  lcd.print(temp, 2);
+  lcd.setCursor(6,0);
+  lcd.print("C");
+  lcd.setCursor (9,0);
+  lcd.print(humid, 2);
+  lcd.setCursor(15,0);
+  lcd.print("%");
+  lcd.setCursor (2,1);
+  lcd.print(pressure, 2);
+  lcd.setCursor(12,1);
+  lcd.print("hPa");  
+  delay(2500);
+  lcd.clear();
+  
+}
+
+void loop() {
+  lcd.init();
+  gas();
+  bme_val();
+  
+}
+
