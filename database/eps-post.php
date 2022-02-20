@@ -24,7 +24,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $value2 = test_input($_POST["value2"]);
         $value3 = test_input($_POST["value3"]);
 
-        // Create connection
+
+
         $conn = new mysqli($servername, $username, $password, $dbname);
         // Check connection
         if ($conn->connect_error) {
