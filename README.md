@@ -12,7 +12,7 @@ I used [*BME280 Sensor*](https://github.com/adafruit/Adafruit_BME280_Library) li
 
 # Hardware
 ![Design](/design/01-design-scatter-rendered.png)
-![Skui](/design/01-design-alat-rendered.png)
+![Skui](/design/02-design-alat-rendered.png)
 ![3D Design](/design/alat.png)
 
 
